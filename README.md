@@ -1,13 +1,7 @@
 # DRDD: 
 
-**OpenFedLLM** is a systematic benchmark for federated fine-tuning of VLMs. 
 
-
-FedVLMBench includes the following key features:
-- 2 **mainstream VLM architectures** (e.g., *show-o*, *LLaVa*).
-- 4 **fine-tuning strategies** 
-- 6 **FL algorithms** (e.g., *FedAvg*, *FedProx*, *FedAvgM*, etc.).
-- 6 **multimodal datasets** spanning 4 cross-domain single-task scenarios and 2 cross-domain multitask settings.
+We propose Decoupled Residual Denoising Diffusion models **(DRDD)** for unified and data-efficient image-to-image (I2I) translation. 
 
 <details open>
 <summary><b>Main Figure:</b></summary>
