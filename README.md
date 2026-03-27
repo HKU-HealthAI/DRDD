@@ -1,4 +1,4 @@
-# DRDD: 
+# DRDD: Decoupled Residual Denoising Diffusion Models for Unified and Data Efficient Image-to-Image Translation. 
 
 
 We propose Decoupled Residual Denoising Diffusion models **(DRDD)** for unified and data-efficient image-to-image (I2I) translation. 
