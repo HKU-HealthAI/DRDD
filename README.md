@@ -19,3 +19,26 @@ We propose Decoupled Residual Denoising Diffusion models **(DRDD)** for unified 
 - [3.Downloading](#3downloading)
 - [4.Running Experiments](#4running-experiments)
 - [5.License](#5license)
+
+## 1.Prerequisites
+
+- Linux operating system
+- NVIDIA GPU with CUDA capability
+- Conda package manager
+- Python 3.7+
+
+
+## 2.Installation
+
+```
+conda env create -f env.yaml
+conda activate drdd
+```
+
+
+## 3.Configuration
+
+
+
+
+
