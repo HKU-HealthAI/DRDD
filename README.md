@@ -31,7 +31,7 @@ We propose Decoupled Residual Denoising Diffusion models **(DRDD)** for unified 
 ## 2.Installation
 
 ```
-git clone 
+git clone git@github.com:HKU-HealthAI/DRDD.git
 cd DRDD DRDD-code
 conda env create -f install.yaml
 conda activate drdd
