@@ -13,11 +13,10 @@ We propose Decoupled Residual Denoising Diffusion models **(DRDD)** for unified 
 
 
 ## Table of Contents
-- [0.Configuration](#0configuration)
 - [1.Prerequisites](#1prerequisites)
 - [2.Installation](#2installation)
 - [3.Downloading](#3downloading)
-- [4.Running Experiments](#4running-experiments)
+- [4.Experiments](#4experiments)
 - [5.License](#5license)
 
 ## 1.Prerequisites
@@ -37,8 +36,19 @@ conda env create -f install.yaml
 conda activate drdd
 ```
 
-## 3.Configuration
+## 3.Downloading
+### Step1: Download Models
+First, download the models in the ./pretrained_models 
 
+### Step2: Download Datasets
+Then, download the training and testing datasets.
+
+## 4.Experiments 
+### Training
+
+### Testing
+
+### Evaluation
 
 
 ## Acknowledgements
