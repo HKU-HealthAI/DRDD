@@ -1,0 +1,41 @@
+data:
+  data_root: "./dataset"
+  image_size: 256
+  channels: 3
+
+res_model:
+  dim: 64
+  dim_mults: [1, 2, 4, 8]
+  condition: True
+  test_res_or_noise: "res_noise"
+
+noise_model:
+  image_size: 256
+  num_channels: 128
+  channel_mult: "1,1,2,2,4,4"
+  num_res_blocks: 2
+
+diffusion:
+  sum_scale: 1
+  delta_end: 1.8e-3
+  norm: l2
+  norm_lambda: [1.0e-6, 8.0e-5]
+  condition: True
+  test_res_or_noise: "res_noise"
+
+sampling:
+  res_sampling_timesteps: 2
+  noise_sampling_timesteps: 2
+  test_res_or_noise: "res"
+
+test:
+  results_ckpt: "./ckpt/DRDD_AiO5.pt"
+  # light rain fog noise blur
+  task: light
+  # task: rain
+  # task: fog
+  # task: noise
+  # task: blur
+  num_samples: 1
+  test_result_folder: './Experience_record/aio5/light'
+  last: True
