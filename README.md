@@ -31,10 +31,11 @@ We propose Decoupled Residual Denoising Diffusion models **(DRDD)** for unified 
 ## 2.Installation
 
 ```
-conda env create -f env.yaml
+git clone 
+cd DRDD DRDD-code
+conda env create -f install.yaml
 conda activate drdd
 ```
-
 
 ## 3.Configuration
 
