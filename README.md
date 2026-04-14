@@ -40,5 +40,7 @@ conda activate drdd
 
 
 
-
+## Acknowledgements
+This repo is based on [RDDM](https://github.com/nachifur/RDDM), [DiffUIR](https://github.com/iSEE-Laboratory/DiffUIR), and [guided-diffusion
+](https://github.com/openai/guided-diffusion), thanks to the original authors for their works!
 
