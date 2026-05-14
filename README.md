@@ -39,13 +39,18 @@ conda activate drdd
 ## 3.Downloading
 ### Step1: Download Models
 First, download the models in the ./pretrained_models 
+Quark: https://pan.quark.cn/s/8d7316f9684e 提取码：iXth
+Google: 
 
 ### Step2: Download Datasets
 Then, download the training and testing datasets.
 
 ## 4.Experiments 
 ### Training
+```
+cd DRDD DRDD-code
 
+```
 ### Testing
 
 ### Evaluation
