@@ -44,6 +44,50 @@ Google:
 
 ### Step2: Download Datasets
 Then, download the training and testing datasets.
+#### Test Dataset
+
+[Rain100L](./dataset/Rain100L)
+
+[GoPro](./dataset/GoPro)
+
+[Dehaze](./dataset/dehaze.tar.gz)
+
+[CBSD68](./dataset/denoise.tar.gz)
+
+[LOL](./dataset/lol)
+
+Place the datasets in the `./data` directory, following the folder structure below:
+
+<pre>
+/dataset
+├── /denoise
+│   ├── /CBSD68
+│   └── make_noise_dataset.py
+├── /Rain100L
+│   ├── /input
+│   └── /target
+├── /dehaze
+│   ├── /gt
+│   ├── /haze
+│   └── make_haze_flist.py
+├── /GoPro
+│   ├── /input
+│   ├── /target
+└── /lol
+    ├── /high
+    └── /low
+</pre>
+
+#### Generating Datasets
+To generate the denoising test dataset `CBSD68_test25`, run:
+```
+python ./dataset/denoise/make_noise_dataset.py
+```
+To generate the dehaze datasets `haze.flist` and `gt.flist`, run:
+```
+python ./dataset/dehaze/make_dehaze_flist.py
+```
+
 
 ## 4.Experiments 
 ### Training
