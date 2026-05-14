@@ -49,10 +49,13 @@ Then, download the training and testing datasets.
 ### Training
 ```
 cd DRDD DRDD-code
-
+python train_noIn.py
 ```
 ### Testing
-
+```
+cd DRDD DRDD-code
+python test.py
+```
 ### Evaluation
 
 
