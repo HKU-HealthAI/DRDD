@@ -51,12 +51,49 @@ Then, download the training and testing datasets.
 cd DRDD DRDD-code
 python train_noIn.py
 ```
-### Testing
+### Inference
+
+To obtain the result of our DRDD in all-in-one-5 dataset, modify the `test.task` parameter in [`./config/AiO5_test.yaml`](./config/AiO5_test.yaml) and then run:
+
+```eval
+python test.py --data_config AiO5_test
 ```
-cd DRDD DRDD-code
-python test.py
-```
+
+The result will shows in `.\Experience_record`.
+
 ### Evaluation
+To evaluate DRDD on the all-in-one-5 dataset, run:
+```
+# rain
+python evaluation.py \
+  --gt_dir ./dataset/Rain100L/target \
+  --pred_dir ./Experience_record/aio5/rain/test/dataset/ \
+  --calculate_lpips
+
+# lol
+python evaluation.py \
+  --gt_dir ./dataset/lol/high \
+  --pred_dir ./Experience_record/aio5/light/test/dataset/ \
+  --calculate_lpips
+
+# haze
+python evaluation.py \
+  --gt_dir ./dataset/dehaze/gt \
+  --pred_dir ./Experience_record/aio5/haze/test/dataset \
+  --calculate_lpips
+
+# noise
+python evaluation.py \
+  --gt_dir ./dataset/denoise/CBSD68 \
+  --pred_dir ./Experience_record/aio5/noise/test/dataset/ \
+  --calculate_lpips
+
+# blur
+python evaluation.py \
+  --gt_dir ./dataset/GoPro/target \
+  --pred_dir ./Experience_record/aio5/blur/test/dataset/ \
+  --calculate_lpips
+```
 
 
 ## Acknowledgements
