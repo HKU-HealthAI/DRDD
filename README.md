@@ -6,7 +6,7 @@ We propose Decoupled Residual Denoising Diffusion models **(DRDD)** for unified 
 <details open>
 <summary><b>Main Figure:</b></summary>
 
-![Main figure](./pics/main_fig1.png)
+![Main figure](./pics/59f95e98bdb81b5b8fa4da76e4c9b40f.png)
 
 </details>
 
