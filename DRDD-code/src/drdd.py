@@ -994,7 +994,148 @@ class Trainer(object):
 
 
     def train(self):
-        pass
+        accelerator = self.accelerator
+        with tqdm(initial=self.step, total=self.train_num_steps, disable=not accelerator.is_main_process) as pbar:
+            while self.step < self.train_num_steps:
+
+                total_loss = [0, 0]
+
+                for _ in range(self.gradient_accumulate_every):
+                    if self.condition:
+                        batch1 = next(self.dl_fog)
+                        batch2 = next(self.dl_light)
+                        batch3 = next(self.dl_rain)
+                        batch4 = next(self.dl_snow)
+                        batch5 = next(self.dl_blur)
+                        batch6 = next(self.dl_noise)
+                        batch7 = next(self.dl_inpaint)
+                        batch8 = next(self.dl_trans)
+                        data = {}
+                        for k, v in batch2.items():
+                            if 'path' in k:
+                                if self.opts.dataset == "all":
+                                    data[k] = batch1[k] + batch2[k] + batch3[k] +  batch5[k] + batch6[k] 
+                                elif self.opts.dataset == "nosnow":
+                                    data[k] = batch1[k] + batch2[k] + batch3[k] + batch5[k]
+                                elif self.opts.dataset == "3dataset":
+                                    data[k] = batch2[k] + batch3[k] + batch5[k]
+                                elif self.opts.dataset == "fog":
+                                    data[k] = batch1[k]
+                                elif self.opts.dataset == "lol":
+                                    data[k] = batch2[k]
+                                elif self.opts.dataset == "rain":
+                                    data[k] = batch3[k]
+                                elif self.opts.dataset == "snow":
+                                    data[k] = batch4[k]
+                                elif self.opts.dataset == "noise":
+                                    data[k] = batch6[k]
+                                elif self.opts.dataset == "new5":
+                                    # print("Yes, this is new5 dataset!")
+                                    data[k] = batch1[k] + batch2[k] + batch3[k] + batch5[k] + batch6[k]
+                                elif self.opts.dataset == "new3":
+                                    # print("Yes, this is new3 dataset!")
+                                    data[k] = batch1[k] + batch3[k] + batch6[k]
+                                elif self.opts.dataset == "new3_inpaint":
+                                    # 与 'path' 分支保持同样的选择：batch1(fog) + batch2(light) + batch3(rain) + batch5(blur) + batch6(noise)
+                                    # print("!!!!!!!!!!!!!!!")
+                                    data[k] = batch1[k] + batch3[k] + batch6[k] + batch7[k]
+                                elif self.opts.dataset == "new5_inpaint_trans":
+                                    # 与 'path' 分支保持同样的选择：batch1(fog) + batch2(light) + batch3(rain) + batch5(blur) + batch6(noise)
+                                    # print("!!!!!!!!!!!!!!!")
+                                    data[k] = batch1[k] + batch3[k] + batch5[k] + batch6[k] + batch7[k] + batch8[k]
+                            else:
+
+                                if self.opts.dataset == "all":
+                                    # data[k] = torch.cat([batch1[k], batch2[k], batch3[k], batch4[k], batch5[k]], dim=0)
+                                    tensors = [batch1[k], batch2[k], batch3[k], batch6[k], batch5[k]]
+                                    # 除了第0维，后面所有维度都要一致
+                                    shapes = [x.shape[1:] for x in tensors]
+                                    if not all(s == shapes[0] for s in shapes):
+                                        print(f"[ERROR] Inconsistent shapes for key '{k}':")
+                                        for idx, x in enumerate(tensors):
+                                            print(f"  batch{idx+1}[{k}].shape = {x.shape}")
+                                        raise ValueError(f"Inconsistent tensor shapes in torch.cat (see above)")
+
+                                    # 只有全一致时才拼接
+                                    data[k] = torch.cat(tensors, dim=0)
+                                elif self.opts.dataset == "nosnow":
+                                    data[k] = torch.cat([batch1[k], batch2[k], batch3[k], batch5[k]], dim=0)
+                                elif self.opts.dataset == "3dataset":
+                                    data[k] = torch.cat([batch2[k], batch3[k], batch5[k]], dim=0)
+                                elif self.opts.dataset == "fog":
+                                    data[k] = batch1[k]
+                                elif self.opts.dataset == "lol":
+                                    data[k] = batch2[k]
+                                elif self.opts.dataset == "rain":
+                                    data[k] = batch3[k]
+                                elif self.opts.dataset == "snow":
+                                    data[k] = batch4[k]
+                                elif self.opts.dataset == "noise":
+                                    data[k] = batch6[k]
+                                elif self.opts.dataset == "new5":
+                                    # 与 'path' 分支保持同样的选择：batch1(fog) + batch2(light) + batch3(rain) + batch5(blur) + batch6(noise)
+                                    data[k] = torch.cat([batch1[k], batch2[k], batch3[k], batch5[k], batch6[k]], dim=0)
+                                elif self.opts.dataset == "new3":
+                                    # 与 'path' 分支保持同样的选择：batch1(fog) + batch2(light) + batch3(rain) + batch5(blur) + batch6(noise)
+                                    data[k] = torch.cat([batch1[k], batch3[k], batch6[k]], dim=0)
+                                elif self.opts.dataset == "inpaint":
+                                    # 与 'path' 分支保持同样的选择：batch1(fog) + batch2(light) + batch3(rain) + batch5(blur) + batch6(noise)
+                                    data[k] = batch7[k]
+                                elif self.opts.dataset == "new5+inpaint":
+                                    # 与 'path' 分支保持同样的选择：batch1(fog) + batch2(light) + batch3(rain) + batch5(blur) + batch6(noise)
+                                    data[k] = torch.cat([batch1[k], batch3[k], batch6[k]], dim=0)
+                                elif self.opts.dataset == "new3_inpaint":
+                                    # 与 'path' 分支保持同样的选择：batch1(fog) + batch2(light) + batch3(rain) + batch5(blur) + batch6(noise)
+                                    # print("!!!!!!!!!!!!!!!")
+                                    data[k] = torch.cat([batch1[k], batch3[k], batch6[k], batch7[k]], dim=0)
+                                elif self.opts.dataset == "new5_inpaint_trans":
+                                    # 与 'path' 分支保持同样的选择：batch1(fog) + batch2(light) + batch3(rain) + batch5(blur) + batch6(noise)
+                                    # print("!!!!!!!!!!!!!!!")
+                                    data[k] = torch.cat([batch1[k], batch3[k], batch5[k],batch6[k], batch7[k],batch8[k]], dim=0)
+                        gt = data["gt"].to(self.device)
+                        cond_input = data["adap"].to(self.device)
+                        task = 1
+                        data = [gt, cond_input, task]
+                    else:
+                        data = next(self.dl)
+                        data = data[0] if isinstance(data, list) else data
+                        data = data.to(self.device)
+
+                    with self.accelerator.autocast():
+                        loss = self.model(data)
+                        for i in range(self.num_unet):
+                            if loss[i] != 0:
+                                loss[i] = loss[i] / self.gradient_accumulate_every
+                                total_loss[i] = total_loss[i] + loss[i].item()
+
+                    for i in range(self.num_unet):
+                        self.accelerator.backward(loss[i])
+
+                accelerator.clip_grad_norm_(self.model.parameters(), 1.0)
+
+                accelerator.wait_for_everyone()
+
+                self.opt0.step()
+                self.opt0.zero_grad()
+                self.opt1.step()
+                self.opt1.zero_grad()
+
+                accelerator.wait_for_everyone()
+
+                self.step += 1
+                if accelerator.is_main_process:
+                    self.ema.to(self.device)
+                    self.ema.update()
+
+                    if self.step != 0 and self.step % (self.save_and_sample_every * 10) == 0:
+                        milestone = self.step // self.save_and_sample_every
+                        self.save(milestone)
+
+                pbar.set_description(
+                    f'loss_unet0: {total_loss[0]:.4f},loss_unet1: {total_loss[1]:.4f}')
+                pbar.update(1)
+
+        accelerator.print('training complete')
 
     def test(self, sample=False, last=True):
         self.ema.ema_model.init()
