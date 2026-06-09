@@ -1,0 +1,58 @@
+data:
+  data_root: "/root/data1/linziyue/RDDM/data/restoration"
+  image_size: 256
+  channels: 3
+
+res_model:
+  dim: 64
+  dim_mults: [1, 2, 4, 8]
+  condition: True
+  lr: 2.0e-5
+  # lr: 4.0e-5
+  # lr: 1.0e-5
+  test_res_or_noise: "res_noise"
+
+noise_model:
+  lr: 2.0e-5
+  # lr: 8.0e-6
+  # lr: 2.0e-6
+  image_size: 256
+  num_channels: 128
+  channel_mult: "1,1,2,2,4,4"
+  num_res_blocks: 2
+  # image_size: 256
+  # num_channels: 192
+  # channel_mult: "1,2,3,4"
+  # num_res_blocks: 3
+  # pretrain_model: "/root/data1/xiahongyu/Diffuir-code/pretrain_model/256x256_diffusion_uncond.pt"
+  # pretrain_model: "/root/data1/xiahongyu/Diffuir-code/pretrain_model/64x64_diffusion.pt"
+  pretrain_model: null
+
+diffusion:
+  sum_scale: 0.64
+  delta_end: 1.8e-3
+  norm: l2
+  norm_lambda: [0, 0]
+  condition: True
+  test_res_or_noise: "res_noise"
+
+training:
+  bsize: 2
+  num_samples: 1
+  train_num_steps: 300000
+  sampling_timesteps: 5
+  ema_decay: 0.995
+  results_folder: "./ckpt_universal/sum_scale/derain_08_150M"
+#  ./ckpt_universal/unet_plus_5/old_5dataset
+#  ./ckpt_universal/unet_plus_5/old_5dataset_noIn
+#  ./ckpt_universal/unet_plus_5/128x128_256_input
+#  ./ckpt_universal/noise_res_cross_fog
+#  ./ckpt_universal/nrc_fog_256x256_64pretrain
+#  ./ckpt_universal/nrc_fog_256x256_128channel
+
+  condition: True
+  save_and_sample_every: 1000
+  gradient_accumulate: 1
+  num_unet: 2
+  load: 50
+
