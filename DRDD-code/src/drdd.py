@@ -949,7 +949,22 @@ class Trainer(object):
 
         if self.condition:
             if opts.phase == "train":
-                raise NotImplementedError("Training details are temporarily unavailable. Full training details will be released upon acceptance.")     
+                self.dl_fog = cycle(self.accelerator.prepare(
+                    DataLoader(dataset[0], batch_size=opts.bsize*4, shuffle=True, pin_memory=True, num_workers=4)))
+                self.dl_light = cycle(self.accelerator.prepare(
+                    DataLoader(dataset[1], batch_size=opts.bsize*4, shuffle=True, pin_memory=True, num_workers=2)))
+                self.dl_rain = cycle(self.accelerator.prepare(
+                    DataLoader(dataset[2], batch_size=opts.bsize*2, shuffle=True, pin_memory=True, num_workers=2)))
+                self.dl_snow = cycle(self.accelerator.prepare(
+                    DataLoader(dataset[3], batch_size=opts.bsize*1, shuffle=True, pin_memory=True, num_workers=2)))
+                self.dl_blur = cycle(self.accelerator.prepare(
+                    DataLoader(dataset[4], batch_size=opts.bsize*4, shuffle=True, pin_memory=True, num_workers=2)))
+                self.dl_noise = cycle(self.accelerator.prepare(
+                    DataLoader(dataset[5], batch_size=opts.bsize*2, shuffle=True, pin_memory=True, num_workers=2)))    
+                self.dl_inpaint = cycle(self.accelerator.prepare(
+                    DataLoader(dataset[6], batch_size=opts.bsize*8, shuffle=True, pin_memory=True, num_workers=2))) 
+                self.dl_trans = cycle(self.accelerator.prepare(
+                    DataLoader(dataset[7], batch_size=opts.bsize*1, shuffle=True, pin_memory=True, num_workers=2)))   
             else:
                 self.sample_dataset = dataset
 
