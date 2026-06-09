@@ -7,7 +7,7 @@ import torch
 from thop import profile, clever_format
 # os.environ['CUDA_VISIBLE_DEVICES'] = '2'
 from data.universal_dataset import AlignedDataset_all
-from src.unet_plus_decouple_noIn import (
+from src.drdd import (
     ResidualDiffusion,
     Trainer, Unet,
     UnetRes, set_seed
