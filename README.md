@@ -7,7 +7,7 @@ DRDD decouples the conventional diffusion-based I2I process into two stages:
 1. **Noise diffusion** for domain harmonization and manifold lifting.
 2. **Residual diffusion** for deterministic source-to-target semantic mapping in the fixed-noise domain.
 
-![Main figure](../pics/59f95e98bdb81b5b8fa4da76e4c9b40f.png)
+![Main figure](./pics/59f95e98bdb81b5b8fa4da76e4c9b40f.png)
 
 ## News
 
