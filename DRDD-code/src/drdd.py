@@ -890,7 +890,112 @@ class ResidualDiffusion(nn.Module):
         return sample_fn(x_input, size, last=last, task=task)
 
 
-
+    def q_sample_noise(self, x_start, t, condition, noise=None):
+            """第一阶段：仅加噪声"""
+            noise = default(noise, lambda: torch.randn_like(x_start))
+    
+            return (
+                    x_start + extract(self.betas_cumsum, t, x_start.shape) * noise
+            )
+    
+        def q_sample_res(self, x_start, x_noisy, x_res, condition, t):
+            """第二阶段：仅加残差
+            Args:
+                t_res: 残差扩散的时间步 (t_res = t - T//2)
+            """
+            # print("t:", t, t.shape, t.device)  # 检查 t 的形状和设备
+            return (
+                    x_noisy + extract(self.alphas_cumsum, t, x_noisy.shape) * x_res
+                    # - extract(self.delta_cumsum, t, x_start.shape) * condition
+            )
+    
+        def p_noise_losses(self, imgs, t, noise=None):
+    
+            if isinstance(imgs, list):  # Condition
+                x_input = 2 * imgs[1] - 1
+                x_start = 2 * imgs[0] - 1  # gt:imgs[0], cond:imgs[1]
+    
+            else:  # Generation
+                x_input = 0
+                x_start = imgs
+    
+            noise = default(noise, lambda: torch.randn_like(x_start))
+            x_noisy = self.q_sample_noise(x_start, t, condition=x_input, noise=noise)
+    
+            if not self.condition:
+                x_in = x_noisy
+            else:
+                x_in = torch.cat((x_noisy, x_input), dim=1)
+    
+            # 模型预测  ##需要改成单边的
+            model_out = self.noise_model(
+                x_in,
+                self.betas_cumsum[t] * self.num_timesteps
+            )
+            # 计算噪声预测损失
+            pred_noise = model_out  # 假设model_out[1]是残差预测
+            loss = F.mse_loss(pred_noise, noise, reduction='none')
+            loss = reduce(loss, 'b ... -> b (...)', 'mean').mean()
+            if self.norm == "l1":
+                l1_norm = sum(p.abs().sum() for p in self.noise_model.parameters())
+                loss += self.norm_lambda[0] * l1_norm
+            elif self.norm == "l2":
+                l2_norm = sum(p.pow(2.0).sum() for p in self.noise_model.parameters())
+                loss += self.norm_lambda[0] * l2_norm
+            return loss
+    
+        def p_res_losses(self, imgs, t, noise=None):
+    
+            """仅残差预测的损失计算"""
+            if isinstance(imgs, list):  # Condition
+                x_input = 2 * imgs[1] - 1
+                x_start = 2 * imgs[0] - 1  # gt:imgs[0], cond:imgs[1]
+    
+            else:  # Generation
+                x_input = 0
+                x_start = imgs
+    
+            noise = default(noise, lambda: torch.randn_like(x_start))
+            x_res = x_input - x_start
+    
+            T = torch.full((x_start.shape[0],), self.num_timesteps - 1, device=x_start.device)
+            x_noisy_T = self.q_sample_noise(x_start, condition=x_input, t=T, noise=noise)
+            x_noisy_res = self.q_sample_res(x_start, x_noisy_T, x_res, x_input, t)
+    
+            if not self.condition:
+                x_in = x_noisy_res
+            else:
+                x_in = torch.cat((x_noisy_res, x_input), dim=1)
+    
+            # 模型预测  ##需要改成单边的
+            model_out = self.res_model(
+                x_in,
+                self.alphas_cumsum[t] * self.num_timesteps
+            )
+    
+            # 计算噪声预测损失
+            pred_res = model_out  # 假设model_out[1]是残差预测
+            loss = F.mse_loss(pred_res, x_res, reduction='none')
+            loss = reduce(loss, 'b ... -> b (...)', 'mean').mean()
+            if self.norm == "l1":
+                l1_norm = sum(p.abs().sum() for p in self.res_model.parameters())
+                loss += self.norm_lambda[1] * l1_norm
+            elif self.norm == "l2":
+                l2_norm = sum(p.pow(2.0).sum() for p in self.res_model.parameters())
+                loss += self.norm_lambda[1] * l2_norm
+            return loss
+    
+        def forward(self, img, *args, **kwargs):
+            if isinstance(img, list):
+                b, c, h, w, device, img_size, = * \
+                                                    img[0].shape, img[0].device, self.image_size
+            else:
+                b, c, h, w, device, img_size, = *img.shape, img.device, self.image_size
+            # assert h == img_size and w == img_size, f'height and width of image must be {img_size}'
+            t = torch.randint(0, self.num_timesteps, (b,), device=device).long()
+            # img = normalize_to_neg_one_to_one(img)
+    
+            return [self.p_res_losses(img, t), self.p_noise_losses(img, t)]
 
 
 class Trainer(object):
