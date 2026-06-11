@@ -40,9 +40,10 @@ training:
   bsize: 2
   num_samples: 1
   train_num_steps: 300000
-  sampling_timesteps: 5
+  res_sampling_timesteps: 2
+  noise_sampling_timesteps: 2
   ema_decay: 0.995
-  results_folder: "./ckpt_universal/sum_scale/derain_08_150M"
+  results_folder: "./ckpt_universal/res"
 #  ./ckpt_universal/unet_plus_5/old_5dataset
 #  ./ckpt_universal/unet_plus_5/old_5dataset_noIn
 #  ./ckpt_universal/unet_plus_5/128x128_256_input
