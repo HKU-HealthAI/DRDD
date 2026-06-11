@@ -249,7 +249,9 @@ DRDD/
     ├── evaluation.py
     ├── install.yaml
     ├── test.py
-    └── train_noIn.py
+    ├── train_noIn.py
+    └── ckpt/
+        └── DRDD_AiO5.pt
 ```
 
 ## Common Issues
