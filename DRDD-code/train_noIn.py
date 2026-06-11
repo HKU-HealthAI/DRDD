@@ -135,23 +135,15 @@ diffusion = ResidualDiffusion(
     delta_end=diff_config['delta_end'],
     norm=diff_config['norm'],
     norm_lambda=diff_config['norm_lambda'],
-    sampling_timesteps=config['training']['sampling_timesteps'],
+    res_sampling_timesteps=config['training']['res_sampling_timesteps'],
+    noise_sampling_timestpes=config['training']['noise_sampling_timesteps']
     condition=diff_config['condition'],
     sum_scale=diff_config['sum_scale'],
     test_res_or_noise=diff_config['test_res_or_noise']
 )
 
-total_params = sum(p.numel() for p in diffusion.parameters())
-print(f"模型总参数量: {total_params}")
-
 res_model = UnetRes(**config['res_model'])
-print("计算Res模型的FLOPs...")
-res_flops, res_params = calculate_flops(res_model)
-print(f"Res模型 - FLOPs: {res_flops}, 参数量: {res_params}")
 
-print("计算Noise模型的FLOPs...")
-noise_flops, noise_params = calculate_flops(noise_model)
-print(f"Noise模型 - FLOPs: {noise_flops}, 参数量: {noise_params}")
 
 train_config = config['training']
 trainer = Trainer(
