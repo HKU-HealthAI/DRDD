@@ -1053,6 +1053,7 @@ class Trainer(object):
         self.condition = condition
 
         if self.condition:
+            # 这里可以尽量放大batch size的数量，拉到显卡能承载的极限，效果会比较好。多任务的时候可以适当调整分配不同任务的batch size占比。
             if opts.phase == "train":
                 self.dl_fog = cycle(self.accelerator.prepare(
                     DataLoader(dataset[0], batch_size=opts.bsize*4, shuffle=True, pin_memory=True, num_workers=4)))
