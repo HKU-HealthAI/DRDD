@@ -986,6 +986,20 @@ class Trainer(object):
 
         device = self.accelerator.device
         self.device = device
+
+    def save(self, milestone):
+        if not self.accelerator.is_local_main_process:
+            return
+        data = {
+            'step': self.step,
+            'model': self.accelerator.get_state_dict(self.model),
+            'opt0': self.opt0.state_dict(),
+            'opt1': self.opt1.state_dict(),
+            'ema': self.ema.state_dict(),
+            'scaler': self.accelerator.scaler.state_dict() if exists(self.accelerator.scaler) else None
+        }
+        torch.save(data, str(self.results_folder / f'model-{milestone}.pt'))
+        print(f"model saved successful - {self.results_folder / f'model-{milestone}.pt'}")
         
     def load(self):
         path = self.results_folder
