@@ -987,8 +987,7 @@ class ResidualDiffusion(nn.Module):
     
     def forward(self, img, *args, **kwargs):
         if isinstance(img, list):
-            b, c, h, w, device, img_size, = * \
-                                                img[0].shape, img[0].device, self.image_size
+            b, c, h, w, device, img_size, = *img[0].shape, img[0].device, self.image_size
         else:
             b, c, h, w, device, img_size, = *img.shape, img.device, self.image_size
         # assert h == img_size and w == img_size, f'height and width of image must be {img_size}'
