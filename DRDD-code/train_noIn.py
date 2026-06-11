@@ -20,7 +20,7 @@ from src.guided_diffusion.script_util import (
     add_dict_to_argparser,
 )
 
-CONFIG_PATH = "./configs/"
+CONFIG_PATH = "./config/"
 sys.stdout.flush()
 set_seed(10)
 
