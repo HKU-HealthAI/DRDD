@@ -73,8 +73,7 @@ DRDD-code/
 
 Available download link:
 
-- Quark: https://pan.quark.cn/s/8d7316f9684e
-- Extraction code: `iXth`
+- Google Drive: https://drive.google.com/file/d/1a9bsZ5sf48697-xBGbKSLeOgiqferaX7/view?usp=sharing
 
 After downloading, make sure the checkpoint path in `config/AiO5_test.yaml` matches your local file:
 
